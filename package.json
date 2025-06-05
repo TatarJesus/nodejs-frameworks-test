@@ -1,0 +1,32 @@
+{
+  "name": "nodejs-frameworks-test",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js",
+    "start:express": "node frameworks/express.js",
+    "start:fastify": "node frameworks/fastify.js",
+    "start:koa": "node frameworks/koa.js",
+    "start:hapi": "node frameworks/hapi.js",
+    "start:feathers-js": "node frameworks/feathersjs.js",
+    "start:all": "concurrently \"npm run start:express\" \"npm run start:fastify\" \"npm run start:koa\" \"npm run start:hapi\" \"npm run start:feathers-js\""
+  },
+  "dependencies": {
+    "@feathersjs/express": "^5.0.34",
+    "@feathersjs/feathers": "^5.0.34",
+    "@hapi/hapi": "^21.4.0",
+    "@koa/router": "^13.1.0",
+    "@types/node": "^22.15.29",
+    "autocannon": "^8.0.0",
+    "express": "^5.1.0",
+    "fastify": "^5.3.3",
+    "k6": "^0.0.0",
+    "koa": "^3.0.0",
+    "pidusage": "^4.0.1",
+    "piscina": "^5.0.0",
+    "restify": "^11.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
