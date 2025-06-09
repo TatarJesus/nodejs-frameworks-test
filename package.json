@@ -8,7 +8,7 @@
     "start:koa": "node frameworks/koa.js",
     "start:hapi": "node frameworks/hapi.js",
     "start:feathers-js": "node frameworks/feathersjs.js",
-    "start:all": "concurrently \"npm run start:express\" \"npm run start:fastify\" \"npm run start:koa\" \"npm run start:hapi\" \"npm run start:feathers-js\""
+    "start:all": "concurrently \"npm run start\" \"npm run start:express\" \"npm run start:fastify\" \"npm run start:koa\" \"npm run start:hapi\" \"npm run start:feathers-js\""
   },
   "dependencies": {
     "@feathersjs/express": "^5.0.34",

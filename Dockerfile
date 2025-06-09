@@ -6,4 +6,4 @@ COPY package*.json ./
 
 RUN npm ci
 
-CMD ["npm", "start"]
+CMD ["npm", "start:all"]
