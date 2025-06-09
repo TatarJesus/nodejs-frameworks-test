@@ -73,7 +73,7 @@ jobs:
         run: |
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
           cd ~/../../mnt/containers/test-apps/api && \
-          sudo make pull && \
-          sudo make build && \
+          sudo docker compose pull && \
+          sudo docker compose up -d --build && \
           sudo docker image prune -f
           "
