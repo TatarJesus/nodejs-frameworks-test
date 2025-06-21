@@ -1,4 +1,16 @@
 // server.js
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api',
+    tags: { hostname: require('os').hostname() },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -6,19 +18,7 @@ const { startMetrics } = require('./socketHandlers/metricsHandler');
 const { handleTest } = require('./socketHandlers/testHandler');
 
 // 1. Инициализация OpenTelemetry (обязательно первым!)
-const Pyroscope = require('@pyroscope/nodejs');
 
-Pyroscope.init({
-    serverAddress: 'http://pyroscope:4040',
-    appName: 'load-test-api',
-    // Enable CPU time collection for wall profiles
-    // This is required for CPU profiling functionality
-    // wall: {
-    //   collectCpuTime: true
-    // }
-});
-
-Pyroscope.start()
 
 const app = express();
 const server = http.createServer(app);
