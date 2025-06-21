@@ -8,7 +8,6 @@ function getUrlForPlatform(platform) {
         case 'elysia': return 'http://localhost:3006/hash';
         case 'h3': return 'http://localhost:3007/hash';
         case 'total': return 'http://localhost:3008/hash';
-        case 'meteor': return 'http://localhost:3009/hash';
         case 'express':
         default: return 'http://localhost:3000/hash';
     }

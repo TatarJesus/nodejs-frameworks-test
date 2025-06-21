@@ -1,0 +1,12 @@
+{
+	"routes": [
+		{
+			"method": "GET",
+			"url": "/"
+		},
+		{
+			"method": "GET",
+			"url": "/hash/"
+		}
+	]
+}

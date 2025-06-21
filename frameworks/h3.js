@@ -1,4 +1,4 @@
-const { createApp, toNodeListener } = require('h3');
+const { createApp, toNodeListener, eventHandler } = require('h3');
 const { createServer } = require('http');
 const { Piscina } = require('piscina');
 const path = require('path');
@@ -10,12 +10,15 @@ const piscina = new Piscina({
     maxThreads: 4,
 });
 
-app.use('/', () => ({
-    message: 'Hello from h3!',
-    timestamp: new Date().toISOString()
+// Явно оборачиваем хендлеры в eventHandler()
+app.use('/', eventHandler(() => {
+    return {
+        message: 'Hello from h3!',
+        timestamp: new Date().toISOString()
+    };
 }));
 
-app.use('/hash', async () => {
+app.use('/hash', eventHandler(async () => {
     try {
         const hash = await piscina.run();
         return { message: hash, timestamp: new Date().toISOString() };
@@ -23,7 +26,7 @@ app.use('/hash', async () => {
         console.error('Piscina error:', err);
         return { error: 'Hashing failed' };
     }
-});
+}));
 
 setInterval(() => {
     console.log('[h3] Memory snapshot:', getMemoryUsage());
