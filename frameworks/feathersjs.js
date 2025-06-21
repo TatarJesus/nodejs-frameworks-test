@@ -30,3 +30,5 @@ setInterval(() => {
 const server = app.listen(3004, () => {
     console.log('FeathersJS server running on http://localhost:3004');
 });
+
+
