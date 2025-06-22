@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-fastify',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'fastify-server',
+        port: '3001'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const Fastify = require('fastify');
 const { Piscina } = require('piscina');
 const path = require('path');

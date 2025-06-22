@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-feathers',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'feathers-server',
+        port: '3004'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const { Piscina } = require('piscina');

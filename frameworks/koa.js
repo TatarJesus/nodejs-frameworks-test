@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-koa',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'koa-server',
+        port: '3002'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const Koa = require('koa');
 const Router = require('@koa/router');
 const { Piscina } = require('piscina');

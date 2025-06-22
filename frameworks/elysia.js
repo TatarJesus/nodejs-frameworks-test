@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-elysia',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'elysia-server',
+        port: '3006'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import Piscina from 'piscina'

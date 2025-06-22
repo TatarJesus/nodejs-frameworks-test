@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-hapi',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'hapi-server',
+        port: '3003'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const Hapi = require('@hapi/hapi');
 const { Piscina } = require('piscina');
 const path = require('path');

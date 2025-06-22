@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-hono',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'hono-server',
+        port: '3005'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const { Hono } = require('hono');
 const { serve } = require('@hono/node-server');
 const { Piscina } = require('piscina');

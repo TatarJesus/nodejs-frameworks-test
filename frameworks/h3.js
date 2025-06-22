@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-h3',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'h3-server',
+        port: '3007'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 const { createApp, toNodeListener, eventHandler } = require('h3');
 const { createServer } = require('http');
 const { Piscina } = require('piscina');

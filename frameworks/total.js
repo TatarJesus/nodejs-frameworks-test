@@ -1,3 +1,19 @@
+const Pyroscope = require('@pyroscope/nodejs');
+
+Pyroscope.init({
+    serverAddress: 'http://pyroscope:4040',
+    appName: 'load-test-api-total',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'total-server',
+        port: '8000'
+    },
+    collectHeapProfiles: true,
+    collectAllocObjects: true,
+});
+
+Pyroscope.start()
+
 require('total4')
 const { Piscina } = require('piscina');
 const path = require('path');

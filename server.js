@@ -3,8 +3,12 @@ const Pyroscope = require('@pyroscope/nodejs');
 
 Pyroscope.init({
     serverAddress: 'http://pyroscope:4040',
-    appName: 'load-test-api',
-    tags: { hostname: require('os').hostname() },
+    appName: 'load-test-api-main',
+    tags: {
+        hostname: require('os').hostname(),
+        service: 'main-server',
+        port: '2999'
+    },
     collectHeapProfiles: true,
     collectAllocObjects: true,
 });
