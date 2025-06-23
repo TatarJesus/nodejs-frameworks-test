@@ -26,18 +26,38 @@ const piscina = new Piscina({
     maxThreads: 4,
 });
 
+// Настройка Express
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.rest());
+app.configure(express.rest());
 
-app.get('/', (req, res) => {
-    res.json({ message: 'Hello from FeathersJS!', timestamp: new Date().toISOString() });
+// Создание сервиса для hash
+class HashService {
+    async find(params) {
+        const result = await piscina.run();
+        return { message: result, timestamp: new Date().toISOString() };
+    }
+
+    async get(id, params) {
+        const result = await piscina.run();
+        return { message: result, timestamp: new Date().toISOString() };
+    }
+}
+
+// Регистрация сервисов
+app.use('/hash', new HashService());
+
+// Корневой маршрут (можно оставить как Express middleware)
+app.use('/', (req, res, next) => {
+    if (req.method === 'GET' && req.path === '/') {
+        res.json({ message: 'Hello from FeathersJS!', timestamp: new Date().toISOString() });
+    } else {
+        next();
+    }
 });
 
-app.get('/hash', async (req, res) => {
-    const result = await piscina.run();
-    res.json({ message: result, timestamp: new Date().toISOString() });
-});
+// Настройка обработки ошибок
+app.use(express.errorHandler());
 
 setInterval(() => {
     console.log('Memory snapshot:', getMemoryUsage());
@@ -46,5 +66,3 @@ setInterval(() => {
 const server = app.listen(3004, () => {
     console.log('FeathersJS server running on http://localhost:3004');
 });
-
-
