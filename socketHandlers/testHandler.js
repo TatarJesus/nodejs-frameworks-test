@@ -33,6 +33,7 @@ function handleTest(socket) {
 
             instance.on('done', (result) => {
                 socket.emit('test-update', {
+                    ...result,
                     reqTotal: result.requests.total,
                     reqPerSec: result.requests.average,
                     latencyMs: result.latency.average,
