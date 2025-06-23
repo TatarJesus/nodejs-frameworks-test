@@ -12,9 +12,9 @@ Pyroscope.init({
     collectAllocObjects: true,
 });
 
-Pyroscope.start()
+Pyroscope.start();
 
-const { createApp, toNodeListener, eventHandler } = require('h3');
+const { createApp, toNodeListener, defineEventHandler, createError } = require('h3');
 const { createServer } = require('http');
 const { Piscina } = require('piscina');
 const path = require('path');
@@ -26,28 +26,87 @@ const piscina = new Piscina({
     maxThreads: 4,
 });
 
-// Явно оборачиваем хендлеры в eventHandler()
-app.use('/', eventHandler(() => {
-    return {
-        message: 'Hello from h3!',
-        timestamp: new Date().toISOString()
-    };
-}));
-
-app.use('/hash', eventHandler(async () => {
-    try {
-        const hash = await piscina.run();
-        return { message: hash, timestamp: new Date().toISOString() };
-    } catch (err) {
-        console.error('Piscina error:', err);
-        return { error: 'Hashing failed' };
+// Обработчик корневого роута
+app.use('/', defineEventHandler(async (event) => {
+    // Проверяем путь и метод
+    if (event.node.req.url === '/' && event.node.req.method === 'GET') {
+        return {
+            message: 'Hello from h3!',
+            timestamp: new Date().toISOString()
+        };
     }
 }));
 
+// Обработчик роута /hash
+app.use('/hash', defineEventHandler(async (event) => {
+    if (event.node.req.method === 'GET') {
+        try {
+            const hash = await piscina.run();
+            return {
+                message: hash,
+                timestamp: new Date().toISOString()
+            };
+        } catch (err) {
+            console.error('Piscina error:', err);
+            throw createError({
+                statusCode: 500,
+                statusMessage: 'Hashing failed',
+                data: { error: err.message }
+            });
+        }
+    }
+}));
+
+// Глобальная обработка ошибок
+app.use(defineEventHandler(async (event) => {
+    try {
+        // Если запрос не обработан выше, возвращаем 404
+        if (!event.handled) {
+            throw createError({
+                statusCode: 404,
+                statusMessage: 'Not Found'
+            });
+        }
+    } catch (error) {
+        console.error('Global error:', error);
+        if (error.statusCode) {
+            throw error;
+        }
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'Internal Server Error'
+        });
+    }
+}));
+
+// Мониторинг памяти
 setInterval(() => {
     console.log('[h3] Memory snapshot:', getMemoryUsage());
 }, 5000);
 
-createServer(toNodeListener(app)).listen(3007, () => {
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+    console.log('Received SIGTERM, shutting down gracefully...');
+    await piscina.destroy();
+    process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+    console.log('Received SIGINT, shutting down gracefully...');
+    await piscina.destroy();
+    process.exit(0);
+});
+
+// Запуск сервера
+const server = createServer(toNodeListener(app));
+
+server.listen(3007, () => {
     console.log('h3 server running at http://localhost:3007');
 });
+
+// Обработка ошибок сервера
+server.on('error', (err) => {
+    console.error('Server error:', err);
+});
+
+module.exports = { app, server, piscina };
