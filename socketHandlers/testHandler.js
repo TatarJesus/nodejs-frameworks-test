@@ -21,7 +21,7 @@ function handleTest(socket) {
     socket.on('start-test', ({ platform, connections, duration }) => {
         if (testRunning) return;
 
-        const url = getUrlForPlatform(platform);
+        const url = getUrlForPlatform(platform) + '/';
         testRunning = true;
 
         try {
