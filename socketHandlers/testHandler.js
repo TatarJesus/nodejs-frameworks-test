@@ -1,6 +1,18 @@
 const autocannon = require('autocannon');
 const { getUrlForPlatform } = require('../utils/urlMapper');
 
+function interpolatePercentile(lowerPercValue, lowerPerc, upperPercValue, upperPerc, targetPerc) {
+    if (targetPerc < lowerPerc || targetPerc > upperPerc) {
+        throw new Error('targetPerc должен быть между lowerPerc и upperPerc');
+    }
+    const weight = (targetPerc - lowerPerc) / (upperPerc - lowerPerc);
+    return lowerPercValue + weight * (upperPercValue - lowerPercValue);
+}
+
+function bytesToMegabytes(bytes) {
+    return bytes / (1024 * 1024);
+}
+
 function handleTest(socket) {
     let testRunning = false;
     let instance = null;
@@ -32,8 +44,18 @@ function handleTest(socket) {
             }, 1000);
 
             instance.on('done', (result) => {
+                const latency_p95 = interpolatePercentile(result.latency.p90, 90, result.latency.p97_5, 97.5, 95);
+                const throughput_p95 = interpolatePercentile(result.throughput.p90, 90, result.throughput.p97_5, 97.5, 95);
+
                 socket.emit('test-update', {
                     ...result,
+                    main: {
+                        rps: result.reqPerSec,
+                        latencyP95: latency_p95,
+                        latencyAvg: result.latency.average,
+                        throughputP95: bytesToMegabytes(throughput_p95),
+                        errors: result.errors,
+                    },
                     reqTotal: result.requests.total,
                     reqPerSec: result.requests.average,
                     latencyMs: result.latency.average,
