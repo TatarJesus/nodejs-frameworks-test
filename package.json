@@ -11,7 +11,7 @@
     "start:h3": "node frameworks/h3.js",
     "start:hono": "node frameworks/hono.js",
     "start:total": "node frameworks/total.js",
-    "start:elysia": "node frameworks/elysia.js",
+    "start:elysia": "node frameworks/elysia.mjs",
     "start:all": "concurrently \"npm run start\" \"npm run start:express\" \"npm run start:fastify\" \"npm run start:koa\" \"npm run start:hapi\" \"npm run start:feathers-js\" \"npm run start:h3\" \"npm run start:hono\" \"npm run start:total\" \"npm run start:elysia\""
   },
   "dependencies": {
